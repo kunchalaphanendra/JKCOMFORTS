@@ -224,15 +224,10 @@ export default function Home() {
       if (drawImg) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Fill canvas with the page-matched background (not JPEG bg)
-        ctx.fillStyle = containerBg;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = 'high';
 
-        // Fit image keeping aspect ratio
-        // Crop the bottom 7% of the source image to completely strip the VEO watermark
+        // Crop the bottom 7% of the source to strip the VEO watermark
         const cropPercent = 0.07;
         const sourceWidth = drawImg.width;
         const sourceHeight = Math.round(drawImg.height * (1 - cropPercent));
@@ -240,72 +235,33 @@ export default function Home() {
         const imgRatio = sourceWidth / sourceHeight;
         const canvasRatio = canvas.width / canvas.height;
 
-        let drawWidth = canvas.width;
-        let drawHeight = canvas.height;
-        let drawX = 0;
-        let drawY = 0;
+        // COVER mode: scale image to fill entire canvas edge-to-edge
+        // No empty space = no visible rectangle = seamless integration
+        let drawWidth, drawHeight, drawX, drawY;
 
         if (canvasRatio > imgRatio) {
+          // Canvas is wider — fit to width, crop top/bottom
+          drawWidth = canvas.width;
+          drawHeight = canvas.width / imgRatio;
+          drawX = 0;
+          drawY = (canvas.height - drawHeight) / 2;
+        } else {
+          // Canvas is taller — fit to height, crop left/right
           drawHeight = canvas.height;
           drawWidth = canvas.height * imgRatio;
           drawX = (canvas.width - drawWidth) / 2;
-        } else {
-          drawWidth = canvas.width;
-          drawHeight = canvas.width / imgRatio;
-          drawY = (canvas.height - drawHeight) / 2;
+          drawY = 0;
         }
 
-        // Apply scale — bigger on mobile so the AC unit fills the screen impressively
-        const scale = isMob ? 0.65 : 0.54;
-        const finalWidth = drawWidth * scale;
-        const finalHeight = drawHeight * scale;
-        const finalX = drawX + (drawWidth - finalWidth) / 2;
-
-        // Ambient gently float effect (+/- 8px on desktop, +/- 4px on mobile)
+        // Ambient gentle float effect
         const floatOffset = Math.sin(Date.now() / 1500) * (isMob ? 4 : 8);
-        const yOffset = isMob ? (canvas.height * 0.28) : (canvas.height * 0.02);
-        const finalY = drawY + (drawHeight - finalHeight) / 2 + yOffset + floatOffset;
 
-        // Draw cropped raw frame
-        ctx.drawImage(drawImg, 0, 0, sourceWidth, sourceHeight, finalX, finalY, finalWidth, finalHeight);
-
-        // ── Premium Edge Feathering ──
-        // Wide gradient overlays that fade from page background OVER the image edges
-        // This dissolves the JPEG's baked-in gray background into the page's white
-        const featherH = isMob ? canvas.width * 0.28 : canvas.width * 0.25;
-        const featherV = isMob ? canvas.height * 0.28 : canvas.height * 0.25;
-
-        // Left edge: page bg → transparent (covers leftmost 25% of canvas)
-        const gL = ctx.createLinearGradient(0, 0, featherH, 0);
-        gL.addColorStop(0, containerBg);
-        gL.addColorStop(0.6, containerBg);
-        gL.addColorStop(1, 'rgba(0,0,0,0)');
-        ctx.fillStyle = gL;
-        ctx.fillRect(0, 0, featherH, canvas.height);
-
-        // Right edge
-        const gR = ctx.createLinearGradient(canvas.width, 0, canvas.width - featherH, 0);
-        gR.addColorStop(0, containerBg);
-        gR.addColorStop(0.6, containerBg);
-        gR.addColorStop(1, 'rgba(0,0,0,0)');
-        ctx.fillStyle = gR;
-        ctx.fillRect(canvas.width - featherH, 0, featherH, canvas.height);
-
-        // Top edge
-        const gT = ctx.createLinearGradient(0, 0, 0, featherV);
-        gT.addColorStop(0, containerBg);
-        gT.addColorStop(0.5, containerBg);
-        gT.addColorStop(1, 'rgba(0,0,0,0)');
-        ctx.fillStyle = gT;
-        ctx.fillRect(0, 0, canvas.width, featherV);
-
-        // Bottom edge
-        const gB = ctx.createLinearGradient(0, canvas.height, 0, canvas.height - featherV);
-        gB.addColorStop(0, containerBg);
-        gB.addColorStop(0.5, containerBg);
-        gB.addColorStop(1, 'rgba(0,0,0,0)');
-        ctx.fillStyle = gB;
-        ctx.fillRect(0, canvas.height - featherV, canvas.width, featherV);
+        // Draw the frame covering the full canvas — no background, no box
+        ctx.drawImage(
+          drawImg,
+          0, 0, sourceWidth, sourceHeight,
+          drawX, drawY + floatOffset, drawWidth, drawHeight
+        );
       }
 
       animationFrameId = requestAnimationFrame(render);

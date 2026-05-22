@@ -81,26 +81,7 @@
   z-index: 1;
 }
 
-.sticky-canvas-wrapper::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: none;
-  pointer-events: none;
-  z-index: 5;
-}
-
-.sticky-canvas-wrapper::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 20vh;
-  background: linear-gradient(to top, var(--hero-bg) 5%, transparent 100%);
-  pointer-events: none;
-  z-index: 10;
-}
+/* No overlays — clean seamless canvas */
 
 /* ============================================
    THEME STYLES FOR DYNAMIC CONTRAST
