@@ -268,7 +268,7 @@ h1, h2, h3, h4, h5, h6 {
   --bg-accent: rgba(255, 255, 255, 0.08) !important;
   --silver: #a1a1aa !important;
   --ghost: #71717a !important;
-  --gradient-primary: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%) !important;
+  --gradient-primary: linear-gradient(135deg, #0a0a0a 0%, #3d3d3d 100%) !important;
   --gradient-card: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%) !important;
   --electric-blue: #ffffff !important;
 }
@@ -451,17 +451,20 @@ h1, h2, h3, h4, h5, h6 {
 
 .btn-primary {
   background: var(--gradient-primary);
-  color: #ffffff;
+  color: #ffffff !important;
   box-shadow: var(--shadow-button);
+  z-index: 1;
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 32px rgba(10, 10, 10, 0.25);
+  color: #ffffff !important;
 }
 
 .btn-primary::before {
   background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 100%);
+  z-index: -1;
 }
 
 .btn-outline {
