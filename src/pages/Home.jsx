@@ -15,7 +15,7 @@ const STAT_ITEMS = [
 const WHY_US_CARDS = [
   {
     title: '100% Satisfaction',
-    badge: 'Very Economy',
+    badge: 'Very Economical',
     icon: ThumbsUp,
     desc: 'Premium, luxury climate systems optimized for peak efficiency and long-term running economies without compromise.',
   },
@@ -100,7 +100,7 @@ export default function Home() {
     const preloadBackgroundImages = () => {
       const isMob = window.innerWidth <= 768;
       const step = isMob ? 8 : 1; // Load every 8th frame on mobile (30 frames total) for lightning-fast loads and buttery smooth scrolls
-      
+
       for (let i = 2; i <= totalFrames; i += step) {
         const img = new Image();
         const frameNum = String(i).padStart(3, '0');
@@ -169,10 +169,10 @@ export default function Home() {
 
     const render = () => {
       const isMob = window.innerWidth <= 768;
-      
+
       // Calculate target frame from scroll progress
       targetFrameRef.current = scrollProgressRef.current * (totalFrames - 1);
-      
+
       // Smooth interpolation (damping)
       const diff = targetFrameRef.current - currentFrame;
       if (Math.abs(diff) > 0.01) {
@@ -180,9 +180,9 @@ export default function Home() {
       } else {
         currentFrame = targetFrameRef.current;
       }
-      
+
       const frameIndex = Math.round(currentFrame);
-      
+
       // O(1) nearest-frame lookup: check exact index first, then search nearby
       let drawImg = imagesRef.current[frameIndex];
       if (!drawImg) {
@@ -194,7 +194,7 @@ export default function Home() {
         // Ultimate fallback to first frame
         if (!drawImg) drawImg = imagesRef.current[0];
       }
-      
+
       const bgColor = FRAME_COLORS[frameIndex] || '#030303';
 
       if (scrollContainerRef.current) {
@@ -340,7 +340,7 @@ export default function Home() {
                   <a href="tel:+919391138975" className="btn btn-primary btn-lg">
                     <Phone size={16} /> +91 93911 38975
                   </a>
-                  <Link to="/products" className="btn btn-outline btn-lg">Explore Superia</Link>
+                  <Link to="/products" className="btn btn-outline btn-lg">Explore Products</Link>
                 </div>
               </div>
             </div>
