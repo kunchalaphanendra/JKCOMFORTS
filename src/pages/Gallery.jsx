@@ -11,18 +11,11 @@ export default function Gallery() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    const obs = new IntersectionObserver(entries =>
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }), { threshold: 0.1 });
+    document.querySelectorAll('.gallery-page .reveal').forEach(el => obs.observe(el));
+    return () => obs.disconnect();
   }, []);
-
-  // Re-observe cards whenever filter changes so new cards become visible
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const obs = new IntersectionObserver(entries =>
-        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }), { threshold: 0.1 });
-      document.querySelectorAll('.gallery-page .reveal').forEach(el => obs.observe(el));
-      return () => obs.disconnect();
-    }, 50);
-    return () => clearTimeout(timer);
-  }, [cat]);
 
   const filtered = cat === 'All' ? gallery : gallery.filter(g => g.category === cat);
 
@@ -45,18 +38,24 @@ export default function Gallery() {
 
       <div className="container" style={{ paddingTop: '3rem', paddingBottom: '5rem' }}>
         {/* Filter */}
-        <div className="gallery-filters reveal">
+        <div className="gallery-filters">
           {CATS.map(c => (
             <button key={c} className={`filter-pill ${cat === c ? 'active' : ''}`} onClick={() => setCat(c)}>{c}</button>
           ))}
         </div>
 
-        {/* Grid */}
+        {/* Grid — no reveal class, cards are always visible with a simple CSS fade */}
         <div className="gallery-grid">
           {filtered.map((item, i) => {
             const Icon = ICONS[item.category] || LayoutGrid;
             return (
-              <div key={item.id} className={`gallery-card glass-card reveal delay-${(i % 3) + 1}`}>
+              <div
+                key={item.id}
+                className="gallery-card glass-card"
+                style={{
+                  animation: `galleryFadeIn 0.4s ease ${i * 0.08}s both`,
+                }}
+              >
                 <div className="gallery-img">
                   {item.image ? (
                     <img src={item.image} alt={item.title} className="gallery-actual-img" />

@@ -435,6 +435,11 @@
   gap: 1.5rem;
 }
 
+@keyframes galleryFadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .gallery-card { overflow: hidden; }
 
 .gallery-img {
