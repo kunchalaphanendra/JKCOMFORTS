@@ -11,11 +11,18 @@ export default function Gallery() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    const obs = new IntersectionObserver(entries =>
-      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }), { threshold: 0.1 });
-    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-    return () => obs.disconnect();
   }, []);
+
+  // Re-observe cards whenever filter changes so new cards become visible
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const obs = new IntersectionObserver(entries =>
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }), { threshold: 0.1 });
+      document.querySelectorAll('.gallery-page .reveal').forEach(el => obs.observe(el));
+      return () => obs.disconnect();
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [cat]);
 
   const filtered = cat === 'All' ? gallery : gallery.filter(g => g.category === cat);
 
