@@ -262,6 +262,40 @@ export default function Home() {
 
         // Draw cropped raw frame
         ctx.drawImage(drawImg, 0, 0, sourceWidth, sourceHeight, finalX, finalY, finalWidth, finalHeight);
+
+        // ── Premium Edge Feathering ──
+        // Soft gradient overlays on all 4 edges to seamlessly blend the image
+        // into the surrounding page background (Apple/Tesla-style integration)
+        const feather = isMob ? canvas.width * 0.18 : canvas.width * 0.15;
+        const featherV = isMob ? canvas.height * 0.2 : canvas.height * 0.18;
+
+        // Left edge fade
+        const gL = ctx.createLinearGradient(0, 0, feather, 0);
+        gL.addColorStop(0, bgColor);
+        gL.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = gL;
+        ctx.fillRect(0, 0, feather, canvas.height);
+
+        // Right edge fade
+        const gR = ctx.createLinearGradient(canvas.width, 0, canvas.width - feather, 0);
+        gR.addColorStop(0, bgColor);
+        gR.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = gR;
+        ctx.fillRect(canvas.width - feather, 0, feather, canvas.height);
+
+        // Top edge fade
+        const gT = ctx.createLinearGradient(0, 0, 0, featherV);
+        gT.addColorStop(0, bgColor);
+        gT.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = gT;
+        ctx.fillRect(0, 0, canvas.width, featherV);
+
+        // Bottom edge fade
+        const gB = ctx.createLinearGradient(0, canvas.height, 0, canvas.height - featherV);
+        gB.addColorStop(0, bgColor);
+        gB.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = gB;
+        ctx.fillRect(0, canvas.height - featherV, canvas.width, featherV);
       }
 
       animationFrameId = requestAnimationFrame(render);
