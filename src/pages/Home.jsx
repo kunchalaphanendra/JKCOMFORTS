@@ -222,7 +222,10 @@ export default function Home() {
       }
 
       if (drawImg) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // 1. Fill canvas with matched background to prevent ANY transparent gaps
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.fillStyle = containerBg;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = 'high';
@@ -235,32 +238,26 @@ export default function Home() {
         const imgRatio = sourceWidth / sourceHeight;
         const canvasRatio = canvas.width / canvas.height;
 
-        // COVER mode: scale image to fill entire canvas edge-to-edge
-        // No empty space = no visible rectangle = seamless integration
+        // COVER mode with 5% overshoot to eliminate any edge artifacts
         let drawWidth, drawHeight, drawX, drawY;
 
         if (canvasRatio > imgRatio) {
-          // Canvas is wider — fit to width, crop top/bottom
-          drawWidth = canvas.width;
-          drawHeight = canvas.width / imgRatio;
-          drawX = 0;
+          drawWidth = canvas.width * 1.05;
+          drawHeight = drawWidth / imgRatio;
+          drawX = (canvas.width - drawWidth) / 2;
           drawY = (canvas.height - drawHeight) / 2;
         } else {
-          // Canvas is taller — fit to height, crop left/right
-          drawHeight = canvas.height;
-          drawWidth = canvas.height * imgRatio;
+          drawHeight = canvas.height * 1.05;
+          drawWidth = drawHeight * imgRatio;
           drawX = (canvas.width - drawWidth) / 2;
-          drawY = 0;
+          drawY = (canvas.height - drawHeight) / 2;
         }
 
-        // Ambient gentle float effect
-        const floatOffset = Math.sin(Date.now() / 1500) * (isMob ? 4 : 8);
-
-        // Draw the frame covering the full canvas — no background, no box
+        // Draw frame covering full canvas — clean, no float, no ghosting
         ctx.drawImage(
           drawImg,
           0, 0, sourceWidth, sourceHeight,
-          drawX, drawY + floatOffset, drawWidth, drawHeight
+          drawX, drawY, drawWidth, drawHeight
         );
       }
 
