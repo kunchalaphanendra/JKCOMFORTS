@@ -238,26 +238,22 @@ export default function Home() {
         const imgRatio = sourceWidth / sourceHeight;
         const canvasRatio = canvas.width / canvas.height;
 
-        // CONTAINED mode: scale image to ~88% of viewport for breathing space
-        // Creates premium whitespace around the product like Apple product pages
+        // COVER mode with 5% overshoot to eliminate any edge artifacts
         let drawWidth, drawHeight, drawX, drawY;
 
         if (canvasRatio > imgRatio) {
-          drawHeight = canvas.height;
-          drawWidth = drawHeight * imgRatio;
-        } else {
-          drawWidth = canvas.width;
+          drawWidth = canvas.width * 1.05;
           drawHeight = drawWidth / imgRatio;
+          drawX = (canvas.width - drawWidth) / 2;
+          drawY = (canvas.height - drawHeight) / 2;
+        } else {
+          drawHeight = canvas.height * 1.05;
+          drawWidth = drawHeight * imgRatio;
+          drawX = (canvas.width - drawWidth) / 2;
+          drawY = (canvas.height - drawHeight) / 2;
         }
 
-        // Scale down for elegant breathing room
-        const scale = isMob ? 0.82 : 0.88;
-        drawWidth *= scale;
-        drawHeight *= scale;
-        drawX = (canvas.width - drawWidth) / 2;
-        drawY = (canvas.height - drawHeight) / 2;
-
-        // Draw frame — clean, centered, premium spacing
+        // Draw frame covering full canvas — clean, no float, no ghosting
         ctx.drawImage(
           drawImg,
           0, 0, sourceWidth, sourceHeight,
@@ -328,19 +324,15 @@ export default function Home() {
           <div className="story-beat beat-center beat-hero-layout" style={{ display: beat1Opacity > 0 ? 'flex' : 'none' }}>
             <div className="beat-content hero-content-split" style={getBeatStyles(beat1Opacity)}>
               <div className="hero-top-text">
-                <span className="beat-tag">THERMAL ENGINEERING</span>
-                <h1 className="beat-headline">Engineered for Intelligent Comfort</h1>
-                <p className="beat-subheadline">High-efficiency inverter cooling systems built for silent performance, faster climate control, and long-term reliability.</p>
+                <span className="beat-tag">Authorized Carrier &amp; Toshiba Dealer</span>
+                <h1 className="beat-headline">Silence, Precision, Comfort Perfected</h1>
+                <p className="beat-subheadline">The Flagship Carrier Superia Lineup</p>
               </div>
 
               <div className="hero-bottom-actions">
-                <div className="beat-list" style={{ marginBottom: '1.2rem' }}>
-                  <div className="beat-list-item"><Check size={16} /> Precision engineered copper heat transfer</div>
-                  <div className="beat-list-item"><Check size={16} /> Whisper-quiet inverter performance</div>
-                  <div className="beat-list-item"><Check size={16} /> Intelligent airflow optimization</div>
-                  <div className="beat-list-item"><Check size={16} /> Built for durability in extreme temperatures</div>
-                </div>
-                <p className="beat-subcopy" style={{ marginBottom: '1.5rem' }}>Luxury cooling technology designed for modern living.</p>
+                <p className="beat-subcopy">
+                  Explore the pinnacle of residential and commercial climate engineering. Designed for high efficiency, quiet operations, and zero energy waste.
+                </p>
                 <div className="beat-actions">
                   <a href="tel:+919391138975" className="btn btn-primary btn-lg">
                     <Phone size={16} /> +91 93911 38975
