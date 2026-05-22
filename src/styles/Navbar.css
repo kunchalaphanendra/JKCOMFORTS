@@ -188,6 +188,18 @@
 
 /* Homepage Hero Dark Overlay Navbar styles */
 .navbar.homepage-dark-top .logo-brand,
+.navbar.homepage-dark-top .logo-brand-title {
+  color: #ffffff !important;
+}
+
+.navbar.homepage-dark-top .logo-brand-sub {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.navbar.homepage-dark-top img {
+  filter: none !important;
+}
+
 .navbar.homepage-dark-top .nav-link,
 .navbar.homepage-dark-top .nav-secondary-link {
   color: rgba(255, 255, 255, 0.95);
