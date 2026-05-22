@@ -582,19 +582,16 @@ export default function Home() {
 
           <div className="latest-works-grid">
             {latestWorks.map((work, idx) => (
-              <div key={work.id} className={`latest-work-card glass-card reveal delay-${idx + 1}`}>
+              <Link key={work.id} to="/gallery" className={`latest-work-card glass-card reveal delay-${idx + 1}`} style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}>
                 <img src={work.image} alt={work.title} className="latest-work-img" />
                 <div className="latest-work-overlay">
                   <div className="latest-work-content">
                     <span className="latest-work-category">{work.category}</span>
                     <h3 className="latest-work-title">{work.title}</h3>
                     <span className="latest-work-year">{work.year}</span>
-                    <Link to="/gallery" className="latest-work-link">
-                      Know More <ArrowRight size={14} />
-                    </Link>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
