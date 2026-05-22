@@ -45,6 +45,16 @@ const ICON_MAP = { Wind, Wrench, Shield, Zap, Droplets, Wifi };
 const FRAME_COLORS = ["#030303", "#030303", "#030303", "#030303", "#030303", "#030303", "#030303", "#030303", "#030303", "#030303", "#030303", "#030303", "#030303", "#030303", "#030303", "#030303", "#040205", "#040205", "#040205", "#040205", "#030104", "#030104", "#030104", "#030104", "#040203", "#161417", "#262628", "#262628", "#333333", "#424244", "#4F5052", "#5C5C5C", "#5C5C5C", "#696969", "#747474", "#848484", "#909090", "#909090", "#9D9D9D", "#A7A7A7", "#B2B2B4", "#BABABC", "#BABABC", "#C4C4C6", "#CECED0", "#D7D7D9", "#DEDEE0", "#DEDEE0", "#E5E5E5", "#EEEEEE", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#EFEFEF", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#F0F0F0", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EEEEEE", "#EEEEEE", "#EEEEEE", "#EEEEEE", "#EEEEEE", "#EEEEEE", "#EEEEEE", "#EEEEEE", "#EEEEEE", "#EEEEEE", "#EEEEEE", "#EEEEEE", "#EEEEEE", "#EEEEEE", "#EEEEEE", "#EEEEEE", "#EEEEEE", "#EEEEEE", "#EEEEEE", "#EEEEEE", "#EEEEEE", "#EDEDED", "#EDEDED", "#EDEDED", "#EDEDED", "#EDEDED", "#EDEDED", "#EDEDED", "#EDEDED", "#EDEDED", "#EDEDED", "#EDEDED", "#EDEDED", "#EDEDED", "#EDEDED", "#EDEDED", "#EDEDED", "#EDEDED", "#EDEDED", "#EDEDED", "#EDEDED", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EEEEEE", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EFEFEF", "#EEEEEE", "#EEEEEE", "#EEEEEE", "#EFEFEF", "#EEEEEE", "#EEEEEE", "#EEEEEE", "#EEEEEE", "#EEEEEE", "#EEEEEE", "#E7E7E7", "#E7E7E7", "#DFDFDF", "#D6D6D6", "#CDCDCD", "#C3C3C3", "#C3C3C3", "#BABABA", "#B2B0B1", "#A9A7A8", "#9F9D9E", "#9F9D9E", "#969495", "#8D8B8C", "#838182", "#7A7879", "#7A7879", "#716F70", "#676566", "#5C5C5C", "#535353", "#535353", "#494949", "#404040", "#363636", "#2C2C2C", "#2C2C2C", "#222222", "#171717", "#020202", "#020202", "#020202", "#020202", "#020202", "#020202", "#020202", "#020202", "#010101", "#010101"];
 
 export default function Home() {
+  // Mobile check
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   // Preloader State
   const [loading, setLoading] = useState(true);
   const [loadProgress, setLoadProgress] = useState(0);
@@ -78,7 +88,7 @@ export default function Home() {
         setLoading(false);
       }, 50);
 
-      // Load rest of the 239 frames in the background
+      // Load rest of the 239 frames in the background (only on desktop!)
       preloadBackgroundImages();
     };
 
@@ -88,6 +98,7 @@ export default function Home() {
     };
 
     const preloadBackgroundImages = () => {
+      if (window.innerWidth <= 768) return; // Skip heavy background loading on mobile
       for (let i = 2; i <= totalFrames; i++) {
         const img = new Image();
         const frameNum = String(i).padStart(3, '0');
@@ -101,7 +112,7 @@ export default function Home() {
 
   // 2. Track Viewport-Relative Scroll Progress (Immune to Jitter)
   useEffect(() => {
-    if (loading) return;
+    if (loading || isMobile) return;
 
     const handleScroll = () => {
       const container = scrollContainerRef.current;
@@ -134,7 +145,7 @@ export default function Home() {
 
   // 3. Canvas Render Loop with Inertia/Damping
   useEffect(() => {
-    if (loading) return;
+    if (loading || isMobile) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -291,125 +302,154 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ---- HERO SCROLLING SEQUENCE ---- */}
-      <section ref={scrollContainerRef} className="scroll-sequence-container theme-dark" style={{ backgroundColor: '#030303' }}>
-        <div className="sticky-canvas-wrapper" style={{ backgroundColor: 'inherit' }}>
-          <canvas ref={canvasRef} />
-
-          {/* BEAT 1: Fully Assembled Hero */}
-          <div className="story-beat beat-center beat-hero-layout" style={{ display: beat1Opacity > 0 ? 'flex' : 'none' }}>
-            <div className="beat-content hero-content-split" style={getBeatStyles(beat1Opacity)}>
-              <div className="hero-top-text">
-                <span className="beat-tag">Authorized Carrier &amp; Toshiba Dealer</span>
-                <h1 className="beat-headline">Silence, Precision, Comfort Perfected</h1>
-                <p className="beat-subheadline">The Flagship Carrier Superia Lineup</p>
+      {/* ---- HERO SEQUENCE (OR STATIC MOBILE HERO) ---- */}
+      {isMobile ? (
+        <section className="mobile-hero-section theme-dark">
+          <div className="container mobile-hero-inner">
+            <div className="mobile-hero-content animate-fade-in">
+              <span className="beat-tag">Authorized Carrier &amp; Toshiba Dealer</span>
+              <h1 className="beat-headline">Silence, Precision, Comfort Perfected</h1>
+              <p className="beat-subheadline">The Flagship Carrier Superia Lineup</p>
+              
+              {/* Floating mobile AC image */}
+              <div className="mobile-hero-img-wrap">
+                <img src="/FRAMS/ezgif-frame-001.jpg" alt="Carrier Superia AC" className="mobile-hero-img" />
+                <div className="mobile-hero-glow" />
               </div>
 
-              <div className="hero-bottom-actions">
+              <p className="beat-subcopy">
+                Explore the pinnacle of residential and commercial climate engineering. Designed for high efficiency, quiet operations, and zero energy waste.
+              </p>
+
+              <div className="beat-actions" style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.8rem', marginTop: '1.5rem', padding: '0 1rem' }}>
+                <a href="tel:+919391138975" className="btn btn-primary btn-lg" style={{ justifyContent: 'center', width: '100%' }}>
+                  <Phone size={16} /> +91 93911 38975
+                </a>
+                <Link to="/products" className="btn btn-outline btn-lg" style={{ justifyContent: 'center', width: '100%' }}>Explore Products</Link>
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : (
+        <section ref={scrollContainerRef} className="scroll-sequence-container theme-dark" style={{ backgroundColor: '#030303' }}>
+          <div className="sticky-canvas-wrapper" style={{ backgroundColor: 'inherit' }}>
+            <canvas ref={canvasRef} />
+
+            {/* BEAT 1: Fully Assembled Hero */}
+            <div className="story-beat beat-center beat-hero-layout" style={{ display: beat1Opacity > 0 ? 'flex' : 'none' }}>
+              <div className="beat-content hero-content-split" style={getBeatStyles(beat1Opacity)}>
+                <div className="hero-top-text">
+                  <span className="beat-tag">Authorized Carrier &amp; Toshiba Dealer</span>
+                  <h1 className="beat-headline">Silence, Precision, Comfort Perfected</h1>
+                  <p className="beat-subheadline">The Flagship Carrier Superia Lineup</p>
+                </div>
+
+                <div className="hero-bottom-actions">
+                  <p className="beat-subcopy">
+                    Explore the pinnacle of residential and commercial climate engineering. Designed for high efficiency, quiet operations, and zero energy waste.
+                  </p>
+                  <div className="beat-actions">
+                    <a href="tel:+919391138975" className="btn btn-primary btn-lg">
+                      <Phone size={16} /> +91 93911 38975
+                    </a>
+                    <Link to="/products" className="btn btn-outline btn-lg">Explore Superia</Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* BEAT 2: Disassembly Starts (Silence 22dB) - Aligned Left */}
+            <div className="story-beat beat-left" style={{ display: beat2Opacity > 0 ? 'flex' : 'none' }}>
+              <div className="beat-content" style={getBeatStyles(beat2Opacity)}>
+                <span className="beat-tag">Acoustic Mastery</span>
+                <h1 className="beat-headline">Whisper Quiet Operations</h1>
+                <p className="beat-subheadline">Hospital-Grade Acoustic Dampening</p>
+                <div className="beat-list">
+                  <div className="beat-list-item">
+                    <Check size={16} /> Real-time active ambient noise control
+                  </div>
+                  <div className="beat-list-item">
+                    <Check size={16} /> 22dB running levels — quieter than a whisper
+                  </div>
+                  <div className="beat-list-item">
+                    <Check size={16} /> Specialized compressor mounts absorb vibration
+                  </div>
+                </div>
                 <p className="beat-subcopy">
-                  Explore the pinnacle of residential and commercial climate engineering. Designed for high efficiency, quiet operations, and zero energy waste.
+                  Comfort is felt, not heard. Experience climate control designed for undisturbed sleep and deep focus.
                 </p>
-                <div className="beat-actions">
-                  <a href="tel:+919391138975" className="btn btn-primary btn-lg">
-                    <Phone size={16} /> +91 93911 38975
-                  </a>
-                  <Link to="/products" className="btn btn-outline btn-lg">Explore Superia</Link>
-                </div>
               </div>
             </div>
-          </div>
 
-          {/* BEAT 2: Disassembly Starts (Silence 22dB) - Aligned Left */}
-          <div className="story-beat beat-left" style={{ display: beat2Opacity > 0 ? 'flex' : 'none' }}>
-            <div className="beat-content" style={getBeatStyles(beat2Opacity)}>
-              <span className="beat-tag">Acoustic Mastery</span>
-              <h1 className="beat-headline">Whisper Quiet Operations</h1>
-              <p className="beat-subheadline">Hospital-Grade Acoustic Dampening</p>
-              <div className="beat-list">
-                <div className="beat-list-item">
-                  <Check size={16} /> Real-time active ambient noise control
+            {/* BEAT 3: Mid-Disassembly (Copper Coils/Efficiency) - Aligned Right */}
+            <div className="story-beat beat-right" style={{ display: beat3Opacity > 0 ? 'flex' : 'none' }}>
+              <div className="beat-content" style={getBeatStyles(beat3Opacity)}>
+                <span className="beat-tag">Thermal Engineering</span>
+                <h1 className="beat-headline">Advanced Copper &amp; Compressor</h1>
+                <p className="beat-subheadline">Variable Speed Inverter Power</p>
+                <div className="beat-list">
+                  <div className="beat-list-item">
+                    <Check size={16} /> 100% grooved copper tubes for 2x heat transfer
+                  </div>
+                  <div className="beat-list-item">
+                    <Check size={16} /> Corrosion-resistant golden hydrophilic fins
+                  </div>
+                  <div className="beat-list-item">
+                    <Check size={16} /> 5-Star rated energy efficiency matching demand
+                  </div>
                 </div>
-                <div className="beat-list-item">
-                  <Check size={16} /> 22dB running levels — quieter than a whisper
-                </div>
-                <div className="beat-list-item">
-                  <Check size={16} /> Specialized compressor mounts absorb vibration
-                </div>
-              </div>
-              <p className="beat-subcopy">
-                Comfort is felt, not heard. Experience climate control designed for undisturbed sleep and deep focus.
-              </p>
-            </div>
-          </div>
-
-          {/* BEAT 3: Mid-Disassembly (Copper Coils/Efficiency) - Aligned Right */}
-          <div className="story-beat beat-right" style={{ display: beat3Opacity > 0 ? 'flex' : 'none' }}>
-            <div className="beat-content" style={getBeatStyles(beat3Opacity)}>
-              <span className="beat-tag">Thermal Engineering</span>
-              <h1 className="beat-headline">Advanced Copper &amp; Compressor</h1>
-              <p className="beat-subheadline">Variable Speed Inverter Power</p>
-              <div className="beat-list">
-                <div className="beat-list-item">
-                  <Check size={16} /> 100% grooved copper tubes for 2x heat transfer
-                </div>
-                <div className="beat-list-item">
-                  <Check size={16} /> Corrosion-resistant golden hydrophilic fins
-                </div>
-                <div className="beat-list-item">
-                  <Check size={16} /> 5-Star rated energy efficiency matching demand
-                </div>
-              </div>
-              <p className="beat-subcopy">
-                Precision calculated airflow paths deliver high performance cooling in up to 55°C heat.
-              </p>
-            </div>
-          </div>
-
-          {/* BEAT 4: Exploded View (PCB & IoT Intelligence) - Aligned Left */}
-          <div className="story-beat beat-left" style={{ display: beat4Opacity > 0 ? 'flex' : 'none' }}>
-            <div className="beat-content" style={getBeatStyles(beat4Opacity)}>
-              <span className="beat-tag">Smart Ecosystem</span>
-              <h1 className="beat-headline">Climate Intelligence</h1>
-              <p className="beat-subheadline">AI Learning &amp; IoT Architecture</p>
-              <div className="beat-list">
-                <div className="beat-list-item">
-                  <Check size={16} /> Built-in WiFi for real-time mobile app management
-                </div>
-                <div className="beat-list-item">
-                  <Check size={16} /> AI Ambient Learn adapts automatically to your habits
-                </div>
-                <div className="beat-list-item">
-                  <Check size={16} /> Predictive diagnostic alerts prevent system failure
-                </div>
-              </div>
-              <p className="beat-subcopy">
-                Integrating seamlessly with smart home voice assistants. Keep your system running smoothly with over-the-air firmware updates.
-              </p>
-            </div>
-          </div>
-
-          {/* BEAT 5: Reassembly / Make Enquiry - Aligned Center */}
-          <div className="story-beat beat-center beat-hero-layout" style={{ display: beat5Opacity > 0 ? 'flex' : 'none' }}>
-            <div className="beat-content hero-content-split" style={getBeatStyles(beat5Opacity)}>
-              <div className="hero-top-text">
-                <span className="beat-tag">JK Comfort Premium</span>
-                <h1 className="beat-headline">The Standard of Luxury Tech</h1>
-                <p className="beat-subheadline">Carrier Superia 365 Inverter Lineup</p>
-              </div>
-
-              <div className="hero-bottom-actions">
                 <p className="beat-subcopy">
-                  Experience the perfect fusion of silence, precision, and efficiency. Get a free consultation and customized installation layout.
+                  Precision calculated airflow paths deliver high performance cooling in up to 55°C heat.
                 </p>
-                <div className="beat-actions">
-                  <Link to="/contact" className="btn btn-primary btn-lg">Make an Enquiry</Link>
-                  <Link to="/products" className="btn btn-outline btn-lg">View Detailed Specs</Link>
+              </div>
+            </div>
+
+            {/* BEAT 4: Exploded View (PCB & IoT Intelligence) - Aligned Left */}
+            <div className="story-beat beat-left" style={{ display: beat4Opacity > 0 ? 'flex' : 'none' }}>
+              <div className="beat-content" style={getBeatStyles(beat4Opacity)}>
+                <span className="beat-tag">Smart Ecosystem</span>
+                <h1 className="beat-headline">Climate Intelligence</h1>
+                <p className="beat-subheadline">AI Learning &amp; IoT Architecture</p>
+                <div className="beat-list">
+                  <div className="beat-list-item">
+                    <Check size={16} /> Built-in WiFi for real-time mobile app management
+                  </div>
+                  <div className="beat-list-item">
+                    <Check size={16} /> AI Ambient Learn adapts automatically to your habits
+                  </div>
+                  <div className="beat-list-item">
+                    <Check size={16} /> Predictive diagnostic alerts prevent system failure
+                  </div>
+                </div>
+                <p className="beat-subcopy">
+                  Integrating seamlessly with smart home voice assistants. Keep your system running smoothly with over-the-air firmware updates.
+                </p>
+              </div>
+            </div>
+
+            {/* BEAT 5: Reassembly / Make Enquiry - Aligned Center */}
+            <div className="story-beat beat-center beat-hero-layout" style={{ display: beat5Opacity > 0 ? 'flex' : 'none' }}>
+              <div className="beat-content hero-content-split" style={getBeatStyles(beat5Opacity)}>
+                <div className="hero-top-text">
+                  <span className="beat-tag">JK Comfort Premium</span>
+                  <h1 className="beat-headline">The Standard of Luxury Tech</h1>
+                  <p className="beat-subheadline">Carrier Superia 365 Inverter Lineup</p>
+                </div>
+
+                <div className="hero-bottom-actions">
+                  <p className="beat-subcopy">
+                    Experience the perfect fusion of silence, precision, and efficiency. Get a free consultation and customized installation layout.
+                  </p>
+                  <div className="beat-actions">
+                    <Link to="/contact" className="btn btn-primary btn-lg">Make an Enquiry</Link>
+                    <Link to="/products" className="btn btn-outline btn-lg">View Detailed Specs</Link>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ---- STATS ---- */}
       <section className="stats-section">
