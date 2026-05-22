@@ -157,7 +157,9 @@ export default function Home() {
     const targetFrameRef = { current: 0 };
 
     const resizeCanvas = () => {
-      const dpr = window.devicePixelRatio || 1;
+      // Cap DPR on mobile to prevent GPU overload on 3x retina screens
+      const rawDpr = window.devicePixelRatio || 1;
+      const dpr = (window.innerWidth <= 768) ? Math.min(rawDpr, 1.5) : rawDpr;
       canvas.width = canvas.clientWidth * dpr;
       canvas.height = canvas.clientHeight * dpr;
     };
@@ -168,44 +170,32 @@ export default function Home() {
     const render = () => {
       const isMob = window.innerWidth <= 768;
       
-      // Get all loaded images sequentially to prevent any search loops or blank flickers!
-      const loadedImages = imagesRef.current.filter(Boolean);
+      // Calculate target frame from scroll progress
+      targetFrameRef.current = scrollProgressRef.current * (totalFrames - 1);
       
-      let drawImg = null;
-      let bgColor = '#030303';
-      
-      if (isMob) {
-        if (loadedImages.length > 0) {
-          targetFrameRef.current = scrollProgressRef.current * (loadedImages.length - 1);
-          
-          const diff = targetFrameRef.current - currentFrame;
-          if (Math.abs(diff) > 0.01) {
-            currentFrame += diff * 0.15; // smooth damping
-          } else {
-            currentFrame = targetFrameRef.current;
-          }
-          
-          const roundedIndex = Math.round(currentFrame);
-          drawImg = loadedImages[roundedIndex] || loadedImages[0];
-          
-          // Map loaded index back to global frame color array
-          const globalFrameIdx = Math.round(scrollProgressRef.current * (totalFrames - 1));
-          bgColor = FRAME_COLORS[globalFrameIdx] || '#030303';
-        }
+      // Smooth interpolation (damping)
+      const diff = targetFrameRef.current - currentFrame;
+      if (Math.abs(diff) > 0.01) {
+        currentFrame += diff * (isMob ? 0.2 : 0.15); // Slightly faster damping on mobile for responsive feel
       } else {
-        targetFrameRef.current = scrollProgressRef.current * (totalFrames - 1);
-        
-        const diff = targetFrameRef.current - currentFrame;
-        if (Math.abs(diff) > 0.01) {
-          currentFrame += diff * 0.15;
-        } else {
-          currentFrame = targetFrameRef.current;
-        }
-        
-        const frameIndex = Math.round(currentFrame);
-        drawImg = imagesRef.current[frameIndex] || imagesRef.current[0];
-        bgColor = FRAME_COLORS[frameIndex] || '#030303';
+        currentFrame = targetFrameRef.current;
       }
+      
+      const frameIndex = Math.round(currentFrame);
+      
+      // O(1) nearest-frame lookup: check exact index first, then search nearby
+      let drawImg = imagesRef.current[frameIndex];
+      if (!drawImg) {
+        // Find nearest loaded frame (search outward from target)
+        for (let offset = 1; offset < 10; offset++) {
+          drawImg = imagesRef.current[frameIndex + offset] || imagesRef.current[frameIndex - offset];
+          if (drawImg) break;
+        }
+        // Ultimate fallback to first frame
+        if (!drawImg) drawImg = imagesRef.current[0];
+      }
+      
+      const bgColor = FRAME_COLORS[frameIndex] || '#030303';
 
       if (scrollContainerRef.current) {
         scrollContainerRef.current.style.backgroundColor = bgColor;
@@ -259,15 +249,15 @@ export default function Home() {
           drawY = (canvas.height - drawHeight) / 2;
         }
 
-        // Apply scale and float offset (scale slightly smaller on mobile to keep clear of text)
-        const scale = isMob ? 0.44 : 0.54;
+        // Apply scale — bigger on mobile so the AC unit fills the screen impressively
+        const scale = isMob ? 0.65 : 0.54;
         const finalWidth = drawWidth * scale;
         const finalHeight = drawHeight * scale;
         const finalX = drawX + (drawWidth - finalWidth) / 2;
 
-        // Ambient gently float effect (+/- 8px)
-        const floatOffset = Math.sin(Date.now() / 1500) * 8;
-        const yOffset = isMob ? (canvas.height * 0.12) : (canvas.height * 0.02);
+        // Ambient gently float effect (+/- 8px on desktop, +/- 5px on mobile)
+        const floatOffset = Math.sin(Date.now() / 1500) * (isMob ? 5 : 8);
+        const yOffset = isMob ? (canvas.height * 0.06) : (canvas.height * 0.02);
         const finalY = drawY + (drawHeight - finalHeight) / 2 + yOffset + floatOffset;
 
         // Draw cropped raw frame

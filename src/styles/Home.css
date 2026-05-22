@@ -1365,6 +1365,10 @@
   .preloader-inner {
     padding: 0 1.5rem;
   }
+  /* Reduce scroll height on mobile so animation completes faster with less thumb dragging */
+  .scroll-sequence-container {
+    height: 300vh; /* 3 screens of scroll instead of 5 — much snappier on touch */
+  }
   
   /* Scroll-sequence mobile luxury glass styling */
   .story-beat {
