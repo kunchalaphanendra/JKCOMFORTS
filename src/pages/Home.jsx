@@ -88,7 +88,7 @@ export default function Home() {
         setLoading(false);
       }, 50);
 
-      // Load rest of the 239 frames in the background (only on desktop!)
+      // Load rest of the 239 frames in the background (selectively on mobile)
       preloadBackgroundImages();
     };
 
@@ -98,8 +98,10 @@ export default function Home() {
     };
 
     const preloadBackgroundImages = () => {
-      if (window.innerWidth <= 768) return; // Skip heavy background loading on mobile
-      for (let i = 2; i <= totalFrames; i++) {
+      const isMob = window.innerWidth <= 768;
+      const step = isMob ? 2 : 1; // Load every 2nd frame on mobile to save bandwidth and memory (120 frames total)
+      
+      for (let i = 2; i <= totalFrames; i += step) {
         const img = new Image();
         const frameNum = String(i).padStart(3, '0');
         img.src = `/FRAMS/ezgif-frame-${frameNum}.jpg`;
@@ -112,7 +114,7 @@ export default function Home() {
 
   // 2. Track Viewport-Relative Scroll Progress (Immune to Jitter)
   useEffect(() => {
-    if (loading || isMobile) return;
+    if (loading) return;
 
     const handleScroll = () => {
       const container = scrollContainerRef.current;
@@ -145,7 +147,7 @@ export default function Home() {
 
   // 3. Canvas Render Loop with Inertia/Damping
   useEffect(() => {
-    if (loading || isMobile) return;
+    if (loading) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
