@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Phone, Mail, MapPin, ArrowRight } from 'lucide-react';
+import Logo from './Logo';
 import '../styles/Footer.css';
 
 // Simple inline social icons
@@ -18,10 +19,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="footer-brand">
             <div className="footer-logo">
-              <div>
-                <div className="logo-brand">JK COMFORT</div>
-                <div className="logo-tag">SINCE 2004</div>
-              </div>
+              <Logo size={44} />
             </div>
             <p className="footer-tagline">Authorized Carrier &amp; Toshiba dealer serving Hyderabad with premium, high-efficiency residential and commercial climate solutions.</p>
             <div className="footer-socials">

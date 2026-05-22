@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronDown } from 'lucide-react';
+import Logo from './Logo';
 import '../styles/Navbar.css';
 
 const NAV_LINKS = [
@@ -57,8 +58,8 @@ export default function Navbar() {
     <nav className={`navbar ${scrolled ? 'scrolled' : 'at-top'} ${isHomepageTop ? 'homepage-dark-top' : ''}`}>
       <div className="nav-inner container">
         {/* Logo */}
-        <Link to="/" className="nav-logo">
-          <span className="logo-brand">JK Comfort</span>
+        <Link to="/" className="nav-logo" style={{ outline: 'none' }}>
+          <Logo />
         </Link>
 
         {/* Desktop Links */}
