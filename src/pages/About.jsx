@@ -9,7 +9,7 @@ const TIMELINE = [
   { year: '2012', title: '5,000 Installations', desc: 'Crossed the 5,000 successful installation milestone. Expanded to 3 service centers.' },
   { year: '2016', title: 'VRF & Smart Systems', desc: 'Launched VRF and IoT-enabled smart AC solutions for large enterprises.' },
   { year: '2020', title: 'Digital Transformation', desc: 'Introduced app-based AMC tracking, remote diagnostics, and predictive maintenance.' },
-  { year: '2024', title: 'ANTIGRAVITY Launch', desc: '15,000+ customers served. Premium rebranding as Hyderabad\'s top climate innovator.' },
+  { year: '2026', title: 'RUNNING SUCCESSFULLY', desc: '15,000+ customers served. Premium rebranding as Hyderabad\'s top climate innovator.' },
 ];
 
 const TEAM = [
