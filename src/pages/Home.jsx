@@ -197,16 +197,22 @@ export default function Home() {
 
       const bgColor = FRAME_COLORS[frameIndex] || '#030303';
 
+      // Calculate luminosity
+      const r = parseInt(bgColor.slice(1, 3), 16);
+      const g = parseInt(bgColor.slice(3, 5), 16);
+      const b = parseInt(bgColor.slice(5, 7), 16);
+      const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+
+      // For light frames: use the ACTUAL page background so container seamlessly
+      // matches the surrounding page (eliminates the visible rectangular box)
+      const isLight = luma >= 120;
+      const pageBg = '#ffffff';
+      const containerBg = isLight ? pageBg : bgColor;
+
       if (scrollContainerRef.current) {
-        scrollContainerRef.current.style.backgroundColor = bgColor;
+        scrollContainerRef.current.style.backgroundColor = containerBg;
 
-        // Dynamically calculate luminosity to toggle dark/light text theme
-        const r = parseInt(bgColor.slice(1, 3), 16);
-        const g = parseInt(bgColor.slice(3, 5), 16);
-        const b = parseInt(bgColor.slice(5, 7), 16);
-        const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-
-        if (luma < 120) {
+        if (!isLight) {
           scrollContainerRef.current.classList.add('theme-dark');
           scrollContainerRef.current.classList.remove('theme-light');
         } else {
@@ -218,8 +224,8 @@ export default function Home() {
       if (drawImg) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Fill canvas with the exact frame background color dynamically
-        ctx.fillStyle = bgColor;
+        // Fill canvas with the page-matched background (not JPEG bg)
+        ctx.fillStyle = containerBg;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         ctx.imageSmoothingEnabled = true;
@@ -264,35 +270,39 @@ export default function Home() {
         ctx.drawImage(drawImg, 0, 0, sourceWidth, sourceHeight, finalX, finalY, finalWidth, finalHeight);
 
         // ── Premium Edge Feathering ──
-        // Soft gradient overlays on all 4 edges to seamlessly blend the image
-        // into the surrounding page background (Apple/Tesla-style integration)
-        const feather = isMob ? canvas.width * 0.18 : canvas.width * 0.15;
-        const featherV = isMob ? canvas.height * 0.2 : canvas.height * 0.18;
+        // Wide gradient overlays that fade from page background OVER the image edges
+        // This dissolves the JPEG's baked-in gray background into the page's white
+        const featherH = isMob ? canvas.width * 0.28 : canvas.width * 0.25;
+        const featherV = isMob ? canvas.height * 0.28 : canvas.height * 0.25;
 
-        // Left edge fade
-        const gL = ctx.createLinearGradient(0, 0, feather, 0);
-        gL.addColorStop(0, bgColor);
+        // Left edge: page bg → transparent (covers leftmost 25% of canvas)
+        const gL = ctx.createLinearGradient(0, 0, featherH, 0);
+        gL.addColorStop(0, containerBg);
+        gL.addColorStop(0.6, containerBg);
         gL.addColorStop(1, 'rgba(0,0,0,0)');
         ctx.fillStyle = gL;
-        ctx.fillRect(0, 0, feather, canvas.height);
+        ctx.fillRect(0, 0, featherH, canvas.height);
 
-        // Right edge fade
-        const gR = ctx.createLinearGradient(canvas.width, 0, canvas.width - feather, 0);
-        gR.addColorStop(0, bgColor);
+        // Right edge
+        const gR = ctx.createLinearGradient(canvas.width, 0, canvas.width - featherH, 0);
+        gR.addColorStop(0, containerBg);
+        gR.addColorStop(0.6, containerBg);
         gR.addColorStop(1, 'rgba(0,0,0,0)');
         ctx.fillStyle = gR;
-        ctx.fillRect(canvas.width - feather, 0, feather, canvas.height);
+        ctx.fillRect(canvas.width - featherH, 0, featherH, canvas.height);
 
-        // Top edge fade
+        // Top edge
         const gT = ctx.createLinearGradient(0, 0, 0, featherV);
-        gT.addColorStop(0, bgColor);
+        gT.addColorStop(0, containerBg);
+        gT.addColorStop(0.5, containerBg);
         gT.addColorStop(1, 'rgba(0,0,0,0)');
         ctx.fillStyle = gT;
         ctx.fillRect(0, 0, canvas.width, featherV);
 
-        // Bottom edge fade
+        // Bottom edge
         const gB = ctx.createLinearGradient(0, canvas.height, 0, canvas.height - featherV);
-        gB.addColorStop(0, bgColor);
+        gB.addColorStop(0, containerBg);
+        gB.addColorStop(0.5, containerBg);
         gB.addColorStop(1, 'rgba(0,0,0,0)');
         ctx.fillStyle = gB;
         ctx.fillRect(0, canvas.height - featherV, canvas.width, featherV);
