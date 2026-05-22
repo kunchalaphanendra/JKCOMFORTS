@@ -99,7 +99,7 @@ export default function Home() {
 
     const preloadBackgroundImages = () => {
       const isMob = window.innerWidth <= 768;
-      const step = isMob ? 2 : 1; // Load every 2nd frame on mobile to save bandwidth and memory (120 frames total)
+      const step = isMob ? 8 : 1; // Load every 8th frame on mobile (30 frames total) for lightning-fast loads and buttery smooth scrolls
       
       for (let i = 2; i <= totalFrames; i += step) {
         const img = new Image();
@@ -166,23 +166,46 @@ export default function Home() {
     window.addEventListener('resize', resizeCanvas);
 
     const render = () => {
-      // Set target frame based on current scroll progress
-      targetFrameRef.current = scrollProgressRef.current * (totalFrames - 1);
-
-      // Interpolation (Damping)
-      const diff = targetFrameRef.current - currentFrame;
-      if (Math.abs(diff) > 0.01) {
-        currentFrame += diff * 0.15; // smooth factor
+      const isMob = window.innerWidth <= 768;
+      
+      // Get all loaded images sequentially to prevent any search loops or blank flickers!
+      const loadedImages = imagesRef.current.filter(Boolean);
+      
+      let drawImg = null;
+      let bgColor = '#030303';
+      
+      if (isMob) {
+        if (loadedImages.length > 0) {
+          targetFrameRef.current = scrollProgressRef.current * (loadedImages.length - 1);
+          
+          const diff = targetFrameRef.current - currentFrame;
+          if (Math.abs(diff) > 0.01) {
+            currentFrame += diff * 0.15; // smooth damping
+          } else {
+            currentFrame = targetFrameRef.current;
+          }
+          
+          const roundedIndex = Math.round(currentFrame);
+          drawImg = loadedImages[roundedIndex] || loadedImages[0];
+          
+          // Map loaded index back to global frame color array
+          const globalFrameIdx = Math.round(scrollProgressRef.current * (totalFrames - 1));
+          bgColor = FRAME_COLORS[globalFrameIdx] || '#030303';
+        }
       } else {
-        currentFrame = targetFrameRef.current;
+        targetFrameRef.current = scrollProgressRef.current * (totalFrames - 1);
+        
+        const diff = targetFrameRef.current - currentFrame;
+        if (Math.abs(diff) > 0.01) {
+          currentFrame += diff * 0.15;
+        } else {
+          currentFrame = targetFrameRef.current;
+        }
+        
+        const frameIndex = Math.round(currentFrame);
+        drawImg = imagesRef.current[frameIndex] || imagesRef.current[0];
+        bgColor = FRAME_COLORS[frameIndex] || '#030303';
       }
-
-      const frameIndex = Math.round(currentFrame);
-      const img = imagesRef.current[frameIndex];
-
-      // Draw active frame if loaded, otherwise fallback to index 0 (which is guaranteed loaded)
-      const drawImg = img ? img : imagesRef.current[0];
-      const bgColor = FRAME_COLORS[frameIndex] || '#030303';
 
       if (scrollContainerRef.current) {
         scrollContainerRef.current.style.backgroundColor = bgColor;
@@ -236,15 +259,16 @@ export default function Home() {
           drawY = (canvas.height - drawHeight) / 2;
         }
 
-        // Apply scale and float offset (scale to 0.54 to keep AC clear of text and fit exploded parts inside screen)
-        const scale = 0.54;
+        // Apply scale and float offset (scale slightly smaller on mobile to keep clear of text)
+        const scale = isMob ? 0.44 : 0.54;
         const finalWidth = drawWidth * scale;
         const finalHeight = drawHeight * scale;
         const finalX = drawX + (drawWidth - finalWidth) / 2;
 
         // Ambient gently float effect (+/- 8px)
         const floatOffset = Math.sin(Date.now() / 1500) * 8;
-        const finalY = drawY + (drawHeight - finalHeight) / 2 + (canvas.height * 0.02) + floatOffset;
+        const yOffset = isMob ? (canvas.height * 0.12) : (canvas.height * 0.02);
+        const finalY = drawY + (drawHeight - finalHeight) / 2 + yOffset + floatOffset;
 
         // Draw cropped raw frame
         ctx.drawImage(drawImg, 0, 0, sourceWidth, sourceHeight, finalX, finalY, finalWidth, finalHeight);
