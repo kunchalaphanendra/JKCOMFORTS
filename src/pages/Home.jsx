@@ -255,9 +255,9 @@ export default function Home() {
         const finalHeight = drawHeight * scale;
         const finalX = drawX + (drawWidth - finalWidth) / 2;
 
-        // Ambient gently float effect (+/- 8px on desktop, +/- 5px on mobile)
-        const floatOffset = Math.sin(Date.now() / 1500) * (isMob ? 5 : 8);
-        const yOffset = isMob ? (canvas.height * 0.06) : (canvas.height * 0.02);
+        // Ambient gently float effect (+/- 8px on desktop, +/- 4px on mobile)
+        const floatOffset = Math.sin(Date.now() / 1500) * (isMob ? 4 : 8);
+        const yOffset = isMob ? (canvas.height * 0.28) : (canvas.height * 0.02);
         const finalY = drawY + (drawHeight - finalHeight) / 2 + yOffset + floatOffset;
 
         // Draw cropped raw frame

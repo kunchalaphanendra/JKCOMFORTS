@@ -1373,7 +1373,7 @@
   /* Scroll-sequence mobile luxury glass styling */
   .story-beat {
     align-items: flex-start;
-    padding-top: 10vh;
+    padding-top: 5vh;
     justify-content: center !important;
     text-align: center !important;
   }
@@ -1381,13 +1381,13 @@
   .beat-content {
     max-width: 92%;
     width: 92%;
-    padding: 2.2rem 1.5rem !important;
-    background: rgba(3, 3, 3, 0.72) !important;
-    backdrop-filter: blur(16px) !important;
-    -webkit-backdrop-filter: blur(16px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    border-radius: 20px !important;
-    box-shadow: 0 24px 50px rgba(0, 0, 0, 0.8) !important;
+    padding: 1.8rem 1.5rem !important;
+    background: rgba(3, 3, 3, 0.92) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+    border-radius: 18px !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.9) !important;
     margin: 0 auto;
     pointer-events: auto;
   }
