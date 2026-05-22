@@ -302,154 +302,125 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ---- HERO SEQUENCE (OR STATIC MOBILE HERO) ---- */}
-      {isMobile ? (
-        <section className="mobile-hero-section theme-dark">
-          <div className="container mobile-hero-inner">
-            <div className="mobile-hero-content animate-fade-in">
-              <span className="beat-tag">Authorized Carrier &amp; Toshiba Dealer</span>
-              <h1 className="beat-headline">Silence, Precision, Comfort Perfected</h1>
-              <p className="beat-subheadline">The Flagship Carrier Superia Lineup</p>
-              
-              {/* Floating mobile AC image */}
-              <div className="mobile-hero-img-wrap">
-                <img src="/FRAMS/ezgif-frame-001.jpg" alt="Carrier Superia AC" className="mobile-hero-img" />
-                <div className="mobile-hero-glow" />
+      {/* ---- HERO SCROLLING SEQUENCE (DESKTOP & MOBILE) ---- */}
+      <section ref={scrollContainerRef} className="scroll-sequence-container theme-dark" style={{ backgroundColor: '#030303' }}>
+        <div className="sticky-canvas-wrapper" style={{ backgroundColor: 'inherit' }}>
+          <canvas ref={canvasRef} />
+
+          {/* BEAT 1: Fully Assembled Hero */}
+          <div className="story-beat beat-center beat-hero-layout" style={{ display: beat1Opacity > 0 ? 'flex' : 'none' }}>
+            <div className="beat-content hero-content-split" style={getBeatStyles(beat1Opacity)}>
+              <div className="hero-top-text">
+                <span className="beat-tag">Authorized Carrier &amp; Toshiba Dealer</span>
+                <h1 className="beat-headline">Silence, Precision, Comfort Perfected</h1>
+                <p className="beat-subheadline">The Flagship Carrier Superia Lineup</p>
               </div>
 
+              <div className="hero-bottom-actions">
+                <p className="beat-subcopy">
+                  Explore the pinnacle of residential and commercial climate engineering. Designed for high efficiency, quiet operations, and zero energy waste.
+                </p>
+                <div className="beat-actions">
+                  <a href="tel:+919391138975" className="btn btn-primary btn-lg">
+                    <Phone size={16} /> +91 93911 38975
+                  </a>
+                  <Link to="/products" className="btn btn-outline btn-lg">Explore Superia</Link>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* BEAT 2: Disassembly Starts (Silence 22dB) - Aligned Left */}
+          <div className="story-beat beat-left" style={{ display: beat2Opacity > 0 ? 'flex' : 'none' }}>
+            <div className="beat-content" style={getBeatStyles(beat2Opacity)}>
+              <span className="beat-tag">Acoustic Mastery</span>
+              <h1 className="beat-headline">Whisper Quiet Operations</h1>
+              <p className="beat-subheadline">Hospital-Grade Acoustic Dampening</p>
+              <div className="beat-list">
+                <div className="beat-list-item">
+                  <Check size={16} /> Real-time active ambient noise control
+                </div>
+                <div className="beat-list-item">
+                  <Check size={16} /> 22dB running levels — quieter than a whisper
+                </div>
+                <div className="beat-list-item">
+                  <Check size={16} /> Specialized compressor mounts absorb vibration
+                </div>
+              </div>
               <p className="beat-subcopy">
-                Explore the pinnacle of residential and commercial climate engineering. Designed for high efficiency, quiet operations, and zero energy waste.
+                Comfort is felt, not heard. Experience climate control designed for undisturbed sleep and deep focus.
               </p>
-
-              <div className="beat-actions" style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.8rem', marginTop: '1.5rem', padding: '0 1rem' }}>
-                <a href="tel:+919391138975" className="btn btn-primary btn-lg" style={{ justifyContent: 'center', width: '100%' }}>
-                  <Phone size={16} /> +91 93911 38975
-                </a>
-                <Link to="/products" className="btn btn-outline btn-lg" style={{ justifyContent: 'center', width: '100%' }}>Explore Products</Link>
-              </div>
             </div>
           </div>
-        </section>
-      ) : (
-        <section ref={scrollContainerRef} className="scroll-sequence-container theme-dark" style={{ backgroundColor: '#030303' }}>
-          <div className="sticky-canvas-wrapper" style={{ backgroundColor: 'inherit' }}>
-            <canvas ref={canvasRef} />
 
-            {/* BEAT 1: Fully Assembled Hero */}
-            <div className="story-beat beat-center beat-hero-layout" style={{ display: beat1Opacity > 0 ? 'flex' : 'none' }}>
-              <div className="beat-content hero-content-split" style={getBeatStyles(beat1Opacity)}>
-                <div className="hero-top-text">
-                  <span className="beat-tag">Authorized Carrier &amp; Toshiba Dealer</span>
-                  <h1 className="beat-headline">Silence, Precision, Comfort Perfected</h1>
-                  <p className="beat-subheadline">The Flagship Carrier Superia Lineup</p>
+          {/* BEAT 3: Mid-Disassembly (Copper Coils/Efficiency) - Aligned Right */}
+          <div className="story-beat beat-right" style={{ display: beat3Opacity > 0 ? 'flex' : 'none' }}>
+            <div className="beat-content" style={getBeatStyles(beat3Opacity)}>
+              <span className="beat-tag">Thermal Engineering</span>
+              <h1 className="beat-headline">Advanced Copper &amp; Compressor</h1>
+              <p className="beat-subheadline">Variable Speed Inverter Power</p>
+              <div className="beat-list">
+                <div className="beat-list-item">
+                  <Check size={16} /> 100% grooved copper tubes for 2x heat transfer
                 </div>
-
-                <div className="hero-bottom-actions">
-                  <p className="beat-subcopy">
-                    Explore the pinnacle of residential and commercial climate engineering. Designed for high efficiency, quiet operations, and zero energy waste.
-                  </p>
-                  <div className="beat-actions">
-                    <a href="tel:+919391138975" className="btn btn-primary btn-lg">
-                      <Phone size={16} /> +91 93911 38975
-                    </a>
-                    <Link to="/products" className="btn btn-outline btn-lg">Explore Superia</Link>
-                  </div>
+                <div className="beat-list-item">
+                  <Check size={16} /> Corrosion-resistant golden hydrophilic fins
+                </div>
+                <div className="beat-list-item">
+                  <Check size={16} /> 5-Star rated energy efficiency matching demand
                 </div>
               </div>
+              <p className="beat-subcopy">
+                Precision calculated airflow paths deliver high performance cooling in up to 55°C heat.
+              </p>
             </div>
+          </div>
 
-            {/* BEAT 2: Disassembly Starts (Silence 22dB) - Aligned Left */}
-            <div className="story-beat beat-left" style={{ display: beat2Opacity > 0 ? 'flex' : 'none' }}>
-              <div className="beat-content" style={getBeatStyles(beat2Opacity)}>
-                <span className="beat-tag">Acoustic Mastery</span>
-                <h1 className="beat-headline">Whisper Quiet Operations</h1>
-                <p className="beat-subheadline">Hospital-Grade Acoustic Dampening</p>
-                <div className="beat-list">
-                  <div className="beat-list-item">
-                    <Check size={16} /> Real-time active ambient noise control
-                  </div>
-                  <div className="beat-list-item">
-                    <Check size={16} /> 22dB running levels — quieter than a whisper
-                  </div>
-                  <div className="beat-list-item">
-                    <Check size={16} /> Specialized compressor mounts absorb vibration
-                  </div>
+          {/* BEAT 4: Exploded View (PCB & IoT Intelligence) - Aligned Left */}
+          <div className="story-beat beat-left" style={{ display: beat4Opacity > 0 ? 'flex' : 'none' }}>
+            <div className="beat-content" style={getBeatStyles(beat4Opacity)}>
+              <span className="beat-tag">Smart Ecosystem</span>
+              <h1 className="beat-headline">Climate Intelligence</h1>
+              <p className="beat-subheadline">AI Learning &amp; IoT Architecture</p>
+              <div className="beat-list">
+                <div className="beat-list-item">
+                  <Check size={16} /> Built-in WiFi for real-time mobile app management
                 </div>
+                <div className="beat-list-item">
+                  <Check size={16} /> AI Ambient Learn adapts automatically to your habits
+                </div>
+                <div className="beat-list-item">
+                  <Check size={16} /> Predictive diagnostic alerts prevent system failure
+                </div>
+              </div>
+              <p className="beat-subcopy">
+                Integrating seamlessly with smart home voice assistants. Keep your system running smoothly with over-the-air firmware updates.
+              </p>
+            </div>
+          </div>
+
+          {/* BEAT 5: Reassembly / Make Enquiry - Aligned Center */}
+          <div className="story-beat beat-center beat-hero-layout" style={{ display: beat5Opacity > 0 ? 'flex' : 'none' }}>
+            <div className="beat-content hero-content-split" style={getBeatStyles(beat5Opacity)}>
+              <div className="hero-top-text">
+                <span className="beat-tag">JK Comfort Premium</span>
+                <h1 className="beat-headline">The Standard of Luxury Tech</h1>
+                <p className="beat-subheadline">Carrier Superia 365 Inverter Lineup</p>
+              </div>
+
+              <div className="hero-bottom-actions">
                 <p className="beat-subcopy">
-                  Comfort is felt, not heard. Experience climate control designed for undisturbed sleep and deep focus.
+                  Experience the perfect fusion of silence, precision, and efficiency. Get a free consultation and customized installation layout.
                 </p>
-              </div>
-            </div>
-
-            {/* BEAT 3: Mid-Disassembly (Copper Coils/Efficiency) - Aligned Right */}
-            <div className="story-beat beat-right" style={{ display: beat3Opacity > 0 ? 'flex' : 'none' }}>
-              <div className="beat-content" style={getBeatStyles(beat3Opacity)}>
-                <span className="beat-tag">Thermal Engineering</span>
-                <h1 className="beat-headline">Advanced Copper &amp; Compressor</h1>
-                <p className="beat-subheadline">Variable Speed Inverter Power</p>
-                <div className="beat-list">
-                  <div className="beat-list-item">
-                    <Check size={16} /> 100% grooved copper tubes for 2x heat transfer
-                  </div>
-                  <div className="beat-list-item">
-                    <Check size={16} /> Corrosion-resistant golden hydrophilic fins
-                  </div>
-                  <div className="beat-list-item">
-                    <Check size={16} /> 5-Star rated energy efficiency matching demand
-                  </div>
-                </div>
-                <p className="beat-subcopy">
-                  Precision calculated airflow paths deliver high performance cooling in up to 55°C heat.
-                </p>
-              </div>
-            </div>
-
-            {/* BEAT 4: Exploded View (PCB & IoT Intelligence) - Aligned Left */}
-            <div className="story-beat beat-left" style={{ display: beat4Opacity > 0 ? 'flex' : 'none' }}>
-              <div className="beat-content" style={getBeatStyles(beat4Opacity)}>
-                <span className="beat-tag">Smart Ecosystem</span>
-                <h1 className="beat-headline">Climate Intelligence</h1>
-                <p className="beat-subheadline">AI Learning &amp; IoT Architecture</p>
-                <div className="beat-list">
-                  <div className="beat-list-item">
-                    <Check size={16} /> Built-in WiFi for real-time mobile app management
-                  </div>
-                  <div className="beat-list-item">
-                    <Check size={16} /> AI Ambient Learn adapts automatically to your habits
-                  </div>
-                  <div className="beat-list-item">
-                    <Check size={16} /> Predictive diagnostic alerts prevent system failure
-                  </div>
-                </div>
-                <p className="beat-subcopy">
-                  Integrating seamlessly with smart home voice assistants. Keep your system running smoothly with over-the-air firmware updates.
-                </p>
-              </div>
-            </div>
-
-            {/* BEAT 5: Reassembly / Make Enquiry - Aligned Center */}
-            <div className="story-beat beat-center beat-hero-layout" style={{ display: beat5Opacity > 0 ? 'flex' : 'none' }}>
-              <div className="beat-content hero-content-split" style={getBeatStyles(beat5Opacity)}>
-                <div className="hero-top-text">
-                  <span className="beat-tag">JK Comfort Premium</span>
-                  <h1 className="beat-headline">The Standard of Luxury Tech</h1>
-                  <p className="beat-subheadline">Carrier Superia 365 Inverter Lineup</p>
-                </div>
-
-                <div className="hero-bottom-actions">
-                  <p className="beat-subcopy">
-                    Experience the perfect fusion of silence, precision, and efficiency. Get a free consultation and customized installation layout.
-                  </p>
-                  <div className="beat-actions">
-                    <Link to="/contact" className="btn btn-primary btn-lg">Make an Enquiry</Link>
-                    <Link to="/products" className="btn btn-outline btn-lg">View Detailed Specs</Link>
-                  </div>
+                <div className="beat-actions">
+                  <Link to="/contact" className="btn btn-primary btn-lg">Make an Enquiry</Link>
+                  <Link to="/products" className="btn btn-outline btn-lg">View Detailed Specs</Link>
                 </div>
               </div>
             </div>
           </div>
-        </section>
-      )}
+        </div>
+      </section>
 
       {/* ---- STATS ---- */}
       <section className="stats-section">
